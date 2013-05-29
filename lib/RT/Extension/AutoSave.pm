@@ -41,7 +41,7 @@ May need root permissions
 
 =head1 AUTHOR
 
-Maciej Dobrzanski <maciek@posterus.com>
+Maciej Dobrzanski <rt@posterus.com>
 
 =head1 BUGS
 

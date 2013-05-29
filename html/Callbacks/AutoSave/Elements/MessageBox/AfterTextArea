@@ -79,8 +79,8 @@ jQuery(document).ready(function() {
     traditional: true,
     success: function(data) {
       if (data.status) {
-        jQuery('#<% $Name %>-MessageBoxAutoSave').html('<small>Auto-save is currently ' +
-          '<strong>inactive</strong>, because existing auto-save has been found. ' +
+        jQuery('#<% $Name %>-MessageBoxAutoSave').html('<small>Autosave is currently ' +
+          '<strong>inactive</strong>, because an existing autosave has been found. ' +
           '<a id="<% $Name %>-MessageBoxAutoSave-Restore" href="javascript:void(0);" ' +
           'style="color: blue;">Restore it now!</a> <a id="<% $Name %>-MessageBoxAutoSave-Delete" ' +
           'href="javascript:void(0);" style="color: red;">Delete it.</a></small>');

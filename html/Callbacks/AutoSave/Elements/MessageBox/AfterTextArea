@@ -95,7 +95,7 @@ jQuery(document).ready(function() {
         HasAutoSave = true;
       }
       else {
-        setTimeout(MessageBoxAutoSave(), 60000);
+        setTimeout(MessageBoxAutoSave, 60000);
       }
     }
   });

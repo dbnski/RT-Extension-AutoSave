@@ -1,0 +1,84 @@
+% $r->content_type('application/json'); 
+% $m->clear_buffer; 
+
+% print encode_json($response);
+
+% $m->abort;
+<%init>
+use JSON::XS qw(encode_json);
+
+my $response = {};
+
+my $op = $ARGS{op} || undef;
+my $content = $ARGS{content} || undef;
+
+unless ($op && $op =~ /^(?:get|check|set|delete)$/) {
+  $m->abort;
+}
+
+if ($op eq 'check') {
+  my @attrs = $session{'CurrentUser'}->Attributes->Named('MessageBoxAutoSave');
+
+  unless (@attrs) {
+    $response->{status} = 0;
+    goto END;
+  }
+  
+  $response->{status} = 1;
+  goto END;
+}
+
+if ($op eq 'delete') {
+  my @attrs = $session{'CurrentUser'}->Attributes->Named('MessageBoxAutoSave');
+
+  unless (@attrs) {
+    $response->{status} = 0;
+    goto END;
+  }
+
+  my $attr = $attrs[0];
+  my @r = $attr->Delete();
+  
+  $response->{status} = $r[0];
+  goto END;
+}
+
+if ($op eq 'get') {
+  my @attrs = $session{'CurrentUser'}->Attributes->Named('MessageBoxAutoSave');
+
+  unless (@attrs) {
+    $response->{status} = 0;
+    goto END;
+  }
+  my $attr = $attrs[0];
+
+  $response = $attr->Content;
+  $response->{status} = 1;
+  goto END;
+}
+
+if ($op eq 'set') {
+  unless ($content) {
+    $m->abort;
+  }
+
+  my $save = {id => $id, content => $content};
+
+  my @attrs = $session{'CurrentUser'}->Attributes->Named('MessageBoxAutoSave');
+  if (@attrs) {
+    my $attr = $attrs[0];
+    my @r = $attr->SetContent($save);
+
+    $response->{status} = $r[0];
+    goto END;
+  }
+
+  my $attr = new RT::Attribute($session{'CurrentUser'});
+  my @r = $attr->Create(Name => 'MessageBoxAutoSave', Content => $save, ContentType => 'storable', Object => $session{'CurrentUser'});
+  
+  $response->{status} = $r[0];
+  goto END;
+}
+
+END:
+</%init>

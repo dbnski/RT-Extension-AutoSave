@@ -1,0 +1,35 @@
+NAME
+    RT-Extension-AutoSave - Automatically saves a draft message into 
+    Request Tracker database and enables user to recover it if neccessary.
+
+CAVEATS
+
+    Does not currently work in SelfService or for unprivileged users.
+
+REQUIREMENTS
+
+    JSON::XS must be installed.
+
+INSTALLATION
+    perl Makefile.PL
+    make
+    make install
+        May need root permissions
+
+    Clear your mason cache
+            rm -rf /opt/rt4/var/mason_data/obj
+
+    Restart your webserver
+
+AUTHOR
+    Maciej Dobrzanski <maciek@posterus.com>
+
+BUGS
+
+LICENSE AND COPYRIGHT
+    This software is Copyright (c) 2013 by PSCE MySQL Consulting & Services,
+    http://www.psce.com/
+
+    This is free software, licensed under:
+
+      The GNU General Public License, Version 2, June 1991

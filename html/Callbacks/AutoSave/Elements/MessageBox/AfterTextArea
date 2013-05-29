@@ -1,0 +1,120 @@
+<p id="<% $Name %>-MessageBoxAutoSave"></p>
+<script>
+var HasAutoSave = false;
+
+function MessageBoxAutoSave() {
+  if (jQuery('#<% $Name %>').val().match(/^-- [\r\n]+/)) {
+    setTimeout(MessageBoxAutoSave, 60000);
+    return;
+  }
+
+  jQuery.ajax({
+    type: 'POST', 
+    url: '<% $WebPath %>/AJAX/AutoSave.html',
+    data: { 
+      'content': jQuery('#<% $Name %>').val(),
+      'op': 'set'
+    }, 
+    dataType: 'json', 
+    traditional: true,
+    success: function(data) {
+      if (data.status) {
+        HasAutoSave = true;
+      }
+    }
+  });
+  setTimeout(MessageBoxAutoSave, 60000);
+}
+
+function RestoreMessageBoxAutoSave() {
+  jQuery.ajax({
+    type: 'POST',
+    url: '<% $WebPath %>/AJAX/AutoSave.html',
+    data: {
+      'op': 'get'
+    }, 
+    dataType: 'json',
+    traditional: true,
+    success: function(data) {
+      jQuery('#<% $Name %>').val(data.content);
+      setTimeout(MessageBoxAutoSave, 60000);
+    }
+  });
+}
+
+function DeleteMessageBoxAutoSave() {
+  jQuery.ajax({
+    type: 'POST',
+    url: '<% $WebPath %>/AJAX/AutoSave.html',
+    data: {
+      'op': 'delete'
+    },
+    async: false,
+    dataType: 'json',
+    traditional: true,
+    success: function(data) {
+      HasAutoSave = false;
+      setTimeout(MessageBoxAutoSave, 60000);
+    }
+  });
+}
+
+jQuery(document).ready(function() {
+  jQuery('#SubmitTicket [name="SubmitTicket"]').click(function() {
+    if (!HasAutoSave) {
+      return(true);
+    }
+
+    DeleteMessageBoxAutoSave();
+    return(true);
+  });
+
+  jQuery.ajax({
+    type: 'POST',
+    url: '<% $WebPath %>/AJAX/AutoSave.html',
+    data: {
+      'op': 'check'
+    }, 
+    dataType: 'json',
+    traditional: true,
+    success: function(data) {
+      if (data.status) {
+        jQuery('#<% $Name %>-MessageBoxAutoSave').html('<small>Auto-save is currently ' +
+          '<strong>inactive</strong>, because existing auto-save has been found. ' +
+          '<a id="<% $Name %>-MessageBoxAutoSave-Restore" href="javascript:void(0);" ' +
+          'style="color: blue;">Restore it now!</a> <a id="<% $Name %>-MessageBoxAutoSave-Delete" ' +
+          'href="javascript:void(0);" style="color: red;">Delete it.</a></small>');
+        jQuery('#<% $Name %>-MessageBoxAutoSave-Restore').click(function() {
+          jQuery('#<% $Name %>-MessageBoxAutoSave').empty();
+          setTimeout(RestoreMessageBoxAutoSave(), 0);
+        });
+        jQuery('#<% $Name %>-MessageBoxAutoSave-Delete').click(function() {
+          jQuery('#<% $Name %>-MessageBoxAutoSave').empty();
+          setTimeout(DeleteMessageBoxAutoSave(), 0);
+        });
+        HasAutoSave = true;
+      }
+      else {
+        setTimeout(MessageBoxAutoSave(), 60000);
+      }
+    }
+  });
+});
+</script>
+
+<%init>
+my $WebPath = RT->Config->Get('WebPath');
+
+unless ($session{'CurrentUser'} && $session{'CurrentUser'}->Privileged()) {
+  return;
+}
+
+unless ($Name) {
+  return;
+}
+</%init>
+
+<%args>
+$Name => undef
+$QuoteTransaction => undef
+</%args>

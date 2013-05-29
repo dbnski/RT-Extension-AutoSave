@@ -1,9 +1,9 @@
 use inc::Module::Install;
 
 
-RTx 'RT-Extension-SpawnTicket';
-all_from 'lib/RT/Extension/SpawnTicket.pm';
-readme_from 'lib/RT/Extension/SpawnTicket.pm';
+RTx 'RT-Extension-AutoSave';
+all_from 'lib/RT/Extension/AutoSave.pm';
+readme_from 'lib/RT/Extension/AutoSave.pm';
 license  'gplv2';
 
 requires_rt('4.0.0');

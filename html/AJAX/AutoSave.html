@@ -62,7 +62,7 @@ if ($op eq 'set') {
     $m->abort;
   }
 
-  my $save = {id => $id, content => $content};
+  my $save = {content => $content};
 
   my @attrs = $session{'CurrentUser'}->Attributes->Named('MessageBoxAutoSave');
   if (@attrs) {
